@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CqlEvaluatorSampleApp</string>
+    <string name="output">Output:</string>
+    <string name="sample_cql">library: ANCRecommendationA2\npatient: mom-with-anaemia</string>
+    <string name="evaluate">Evaluate</string>
+    <string name="cql">Parameters:</string>
+    <string name="cql_hint">enter CQL here</string>
+</resources>
