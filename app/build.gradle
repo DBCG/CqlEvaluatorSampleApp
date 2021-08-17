@@ -53,6 +53,9 @@ android {
         exclude 'META-INF/sun-jaxb.episode'
         exclude("META-INF/*.kotlin_module")
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -67,12 +70,14 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.2'
     implementation 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
     implementation 'javax.xml.stream:stax-api:1.0-2'
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-android:5.3.0"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-android:5.4.0"
     implementation 'org.opencds.cqf.cql:engine:1.5.2-SNAPSHOT'
     implementation 'org.opencds.cqf.cql:engine.fhir:1.5.2-SNAPSHOT'
-    implementation 'org.opencds.cqf.cql:evaluator:1.2.0'
-    implementation 'org.opencds.cqf.cql:evaluator.builder:1.2.0'
-    implementation 'org.opencds.cqf.cql:evaluator.dagger:1.2.0'
+    implementation 'org.opencds.cqf.cql:evaluator:1.2.1-SNAPSHOT'
+    implementation 'org.opencds.cqf.cql:evaluator.builder:1.2.1-SNAPSHOT'
+    implementation 'org.opencds.cqf.cql:evaluator.dagger:1.2.1-SNAPSHOT'
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
