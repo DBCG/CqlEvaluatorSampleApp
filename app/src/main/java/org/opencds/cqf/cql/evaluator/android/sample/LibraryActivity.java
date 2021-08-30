@@ -1,5 +1,6 @@
 package org.opencds.cqf.cql.evaluator.android.sample;
 
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -76,63 +77,41 @@ public class LibraryActivity extends AppCompatActivity {
         this.libraryVersionSelector = new LibraryVersionSelector(this.adapterFactory);
         this.fhirTypeConverter = new FhirTypeConverterFactory().create(fhirContext.getVersion().getVersion());
         this.cqlFhirParametersConverter = new CqlFhirParametersConverter(this.fhirContext, this.adapterFactory, this.fhirTypeConverter);
-        try {
-            // Load Library Content and create a LibraryContentProvider, which is the interface used by the LibraryLoader for getting library CQL/ELM/etc.
-            InputStream libraryStream = this.getAssets().open("library/Library-ANCRecommendationA2.json");
-            InputStream fhirHelpersStream = this.getAssets().open("library/Library-FHIRHelpers.json");
-            IBaseResource library = this.parser.parseResource(libraryStream);
-            IBaseResource fhirHelpersLibrary = this.parser.parseResource(fhirHelpersStream);
 
-            List<IBaseResource> resources = Lists.newArrayList(library, fhirHelpersLibrary);
-            IVersionSpecificBundleFactory bundleFactory = this.fhirContext.newBundleFactory();
+        org.hl7.fhir.r4.model.Bundle assetBundle = AssetBundler.getAssetBundle(this.fhirContext, this.getAssets());
+        this.contentProvider = new BundleFhirLibraryContentProvider(this.fhirContext, assetBundle, this.adapterFactory, this.libraryVersionSelector);
 
-            BundleLinks bundleLinks = new BundleLinks("", null, true, BundleTypeEnum.COLLECTION);
+        // Load terminology content, and create a TerminologyProvider which is the interface used by the evaluator for resolving terminology
+        this.terminologyProvider = new BundleTerminologyProvider(this.fhirContext, AssetBundler.getTerminologyBundle(this.fhirContext, this.getAssets()));
 
-            bundleFactory.addRootPropertiesToBundle("bundled-directory", bundleLinks, resources.size(), null);
+        org.hl7.fhir.r4.model.Bundle dataBundle = AssetBundler.getDataBundle(this.fhirContext, this.getAssets());
+        this.bundleRetrieveProvider = new BundleRetrieveProvider(this.fhirContext, AssetBundler.getDataBundle(this.fhirContext, this.getAssets()));
+        this.bundleRetrieveProvider.setTerminologyProvider(this.terminologyProvider);
+        this.bundleRetrieveProvider.setExpandValueSets(true);
 
-            bundleFactory.addResourcesToBundle(resources, BundleTypeEnum.COLLECTION, "",
-                    BundleInclusionRule.BASED_ON_INCLUDES, null);
+        TranslatingLibraryLoader libraryLoader = new TranslatingLibraryLoader(
+                new ModelManager(),
+                Collections.singletonList(this.contentProvider),
+                CqlTranslatorOptions.defaultOptions()) {
 
-            this.contentProvider = new BundleFhirLibraryContentProvider(this.fhirContext, (IBaseBundle) bundleFactory.getResourceBundle(), this.adapterFactory, this.libraryVersionSelector);
-
-            // Load terminology content, and create a TerminologyProvider which is the interface used by the evaluator for resolving terminology
-            InputStream valueSetStream = this.getAssets().open("valueset/valueset-bundle.json");
-            IBaseResource valueSetBundle = this.parser.parseResource(valueSetStream);
-            this.terminologyProvider = new BundleTerminologyProvider(this.fhirContext, (IBaseBundle) valueSetBundle);
-
-            // Load data content, and create a RetrieveProvider which is the interface used for implementations of CQL retrieves.
-            InputStream dataStream = this.getAssets().open("test/mom-with-anaemia-bundle.json");
-            IBaseResource dataBundle = this.parser.parseResource(dataStream);
-            this.bundleRetrieveProvider = new BundleRetrieveProvider(this.fhirContext, (IBaseBundle) dataBundle);
-            this.bundleRetrieveProvider.setTerminologyProvider(this.terminologyProvider);
-            this.bundleRetrieveProvider.setExpandValueSets(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
-        this.cqlEvaluator = new CqlEvaluator(
-                new TranslatingLibraryLoader(
-                        new ModelManager(),
-                        Collections.singletonList(this.contentProvider),
-                        CqlTranslatorOptions.defaultOptions()) {
-
-                    // This is a hack needed to circumvent a bug that's currently present in the cql-engine.
-                    // By default, the LibraryLoader checks to ensure that the same translator options are used to for all libraries,
-                    // And it will re-translate if possible. Since translating CQL is not currently possible
-                    // on Android (some changes to the way ModelInfos are loaded is needed) the library loader just needs to load libraries
-                    // regardless of whether the options match.
-                    @Override
-                    protected Boolean translatorOptionsMatch(Library library) {
-                        return true;
+            // This is a hack needed to circumvent a bug that's currently present in the cql-engine.
+            // By default, the LibraryLoader checks to ensure that the same translator options are used to for all libraries,
+            // And it will re-translate if possible. Since translating CQL is not currently possible
+            // on Android (some changes to the way ModelInfos are loaded is needed) the library loader just needs to load libraries
+            // regardless of whether the options match.
+            @Override
+            protected Boolean translatorOptionsMatch(Library library) {
+                return true;
 //                        EnumSet<CqlTranslator.Options> options = TranslatorOptionsUtil.getTranslatorOptions(library);
 //                        if (options == null) {
 //                            return false;
 //                        }
 //
 //                        return options.equals(this.cqlTranslatorOptions.getOptions());
-                    }
-                },
+            }
+        };
+
+        this.cqlEvaluator = new CqlEvaluator(libraryLoader,
                 new HashMap<String, DataProvider>() {{
                     put("http://hl7.org/fhir", new CompositeDataProvider(new R4FhirModelResolver(), bundleRetrieveProvider));
                 }}, this.terminologyProvider);
@@ -141,7 +120,7 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     public void runCql(View view) {
-        IBaseParameters result = libraryEvaluator.evaluate(new VersionedIdentifier().withId("ANCRecommendationA2"), Pair.of("Patient", "mom-with-anaemia"), null, null);
+        IBaseParameters result = libraryEvaluator.evaluate(new VersionedIdentifier().withId("ANCIND02"), Pair.of("Patient", "mom-with-anaemia"), null, null);
 
         String parameters = this.fhirContext.newJsonParser().encodeResourceToString(result);
         TextView output = (TextView) this.findViewById(R.id.output_text);

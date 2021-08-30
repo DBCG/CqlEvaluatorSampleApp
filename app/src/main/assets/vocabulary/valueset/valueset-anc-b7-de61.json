@@ -1,0 +1,20 @@
+{
+  "resourceType": "ValueSet",
+  "id": "anc-b7-de61",
+  "url": "http://fhir.org/guides/who/anc-cds/ValueSet/anc-b7-de61",
+  "name": "CurrentphysiologicalsymptomsPainLegChoices",
+  "title": "Current physiological symptoms - Pain - Leg Choices",
+  "status": "draft",
+  "experimental": false,
+  "description": "Codes representing possible values for the Current physiological symptoms - Pain - Leg Choices element",
+  "immutable": true,
+  "compose": {
+    "include": [ {
+      "system": "http://fhir.org/guides/who/anc-cds/CodeSystem/anc-custom-codes",
+      "concept": [ {
+        "code": "ANC.B7.DE61",
+        "display": "Pain - Leg"
+      } ]
+    } ]
+  }
+}

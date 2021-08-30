@@ -1,0 +1,146 @@
+<CodeSystem xmlns="http://hl7.org/fhir">
+    <id value="anc-activity-codes"/>
+    <url value="http://fhir.org/guides/who/anc-cds/CodeSystem/anc-activity-codes"/>
+		<name value="ANCActivityCodes"/>
+    <title value="ANC Activity Codes"/>
+    <status value="draft"/>
+    <experimental value="false"/>
+    <description value="Activity codes are codes to identify the types of activities that are performed as part of the delivery of antenatal care"/>
+    <caseSensitive value="true"/>
+    <valueSet value="http://fhir.org/guides/who/anc-cds/ValueSet/anc-activity-codes"/>
+    <content value="complete"/>
+    <concept>
+			<code value="ANC.A"/>
+			<display value="Registration"/>
+			<definition value="The registration process performed to identify and register a pregnant woman so that she can proceed to the antenatal care consultation."/>
+		</concept>
+    <concept>
+      <code value="ANC.A4"/>
+      <display value="Gather client details"/>
+      <definition value="Gathering basic information and available identifiers to enable determination of patient identity"/>
+    </concept>
+    <concept>
+			<code value="ANC.A7"/>
+			<display value="Create client record?OR?ANC.A8. Validate client details"/>
+			<definition value="Issue a unique identifier is used and possible at the facility. Review and update client record."/>
+		</concept>
+		<concept>
+			<code value="ANC.B"/>
+			<display value="Routine contact"/>
+			<definition value="A routine antenatal care contact to counsel and provide antenatal care services to a pregnant woman."/>
+		</concept>
+    <concept>
+      <code value="ANC.B4"/>
+      <display value="Confirm pregnancy"/>
+      <definition value="Confirm the woman is pregnant using a urine dipstick test or by a blood test."/>
+    </concept>
+    <concept>
+      <code value="ANC.B5"/>
+      <display value="Quick check"/>
+      <definition value="Health worker assesses woman to see whether there are any danger signs that warrant in-facility management or referral, or if possible, to proceed with the routine ANC contact."/>
+    </concept>
+    <concept>
+      <code value="ANC.B6"/>
+      <display value="Profile"/>
+      <definition value="If this is the woman’s first ANC contact, the health worker records information on her current pregnancy, past medical and obstetric history, medications, behaviour, immunization status and other background information."/>
+    </concept>
+    <concept>
+      <code value="ANC.B7"/>
+      <display value="Symptoms &amp; follow-up"/>
+      <definition value="Health worker follows up on any previously reported behaviours, medications and symptoms. Steps 8–10 below are all conducted within the ANC assessment."/>
+    </concept>
+    <concept>
+      <code value="ANC.B8"/>
+      <display value="Physical exam"/>
+      <definition value="Health worker conducts a physical exam for weight, height (if first contact), maternal exam and fetal assessment."/>
+    </concept>
+    <concept>
+      <code value="ANC.B9"/>
+      <display value="Lab tests &amp; imaging"/>
+      <definition value="Health worker orders or follows up on required laboratory tests and ultrasound, as necessary. Health worker informs woman of all tests ordered and explains why."/>
+    </concept>
+    <concept>
+      <code value="ANC.B10"/>
+      <display value="Counselling &amp; treatment"/>
+      <definition value="Based on the previous steps, health worker provides counselling for potential risk, behaviours and diagnoses, as well as preventive services and any treatment that can be provided at the facility, including through admission to a different part of the facility."/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.1"/>
+      <display value="Behaviour counselling"/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.2"/>
+      <display value="Physiological symptoms counselling"/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.3"/>
+      <display value="Diet counselling"/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.4"/>
+      <display value="Diagnosis &amp; treatment"/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.5"/>
+      <display value="Nutrition supplementation"/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.6"/>
+      <display value="Risk reduction &amp; general counselling"/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.7"/>
+      <display value="Immunizations"/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.8"/>
+      <display value="Intimate partner violence first-line support and care"/>
+    </concept>
+    <concept>
+      <code value="ANC.B10.9"/>
+      <display value="Deworming &amp; malaria prophylaxis"/>
+    </concept>
+    <concept>
+      <code value="ANC.B11"/>
+      <display value="Urgent referral needed?"/>
+      <definition value="If there are any diagnoses requiring referral or services that cannot be provided at the facility, health worker refers pregnant woman based on findings during counselling."/>
+    </concept>
+    <concept>
+      <code value="ANC.B12"/>
+      <display value="Scheduling"/>
+      <definition value="If a referral is not required, health worker schedules follow-up contact."/>
+    </concept>
+    <concept>
+			<code value="ANC.C"/>
+			<display value="Referral"/>
+			<definition value="An antenatal care referral to provide timely and appropriate referrals to a higher-level facility or health-care provider."/>
+		</concept>
+    <concept>
+			<code value="ANC.C1"/>
+			<display value="Emergency referral?"/>
+		</concept>
+    <concept>
+			<code value="ANC.C6"/>
+			<display value="Provide information to referral facility"/>
+		</concept>
+		<concept>
+			<code value="ANC.D"/>
+			<display value="Antenatal health promotion, follow-up in the community"/>
+			<definition value="The process followed to provide routine health promotion and follow-up within the community."/>
+		</concept>
+    <concept>
+      <code value="ANC.E"/>
+      <display value="Reporting on aggregate indicators"/>
+      <definition value="The process followed to compile and submit relevant data contributing to indicators and other reporting needs on a routine basis."/>
+    </concept>
+    <concept>
+      <code value="ANC.Confirugation"/>
+      <display value="Configuration"/>
+      <definition value="Configuration settings for decision logic and indicators that may vary by setting"/>
+    </concept>
+    <concept>
+      <code value="ANC.End"/>
+      <display value="End"/>
+      <definition value="The activity of gathering information about the end of a pregnancy and closing an antenatal care record."/>
+    </concept>
+</CodeSystem>
