@@ -1,0 +1,20 @@
+{
+  "resourceType": "ValueSet",
+  "id": "anc-b7-de1",
+  "url": "http://fhir.org/guides/who/anc-cds/ValueSet/anc-b7-de1",
+  "name": "Medicationfollowup",
+  "title": "Medication follow-up",
+  "status": "draft",
+  "experimental": false,
+  "description": "Codes representing possible values for the Medication follow-up element",
+  "immutable": true,
+  "compose": {
+    "include": [ {
+      "system": "http://fhir.org/guides/who/anc-cds/CodeSystem/anc-custom-codes",
+      "concept": [ {
+        "code": "ANC.B7.DE1",
+        "display": "Medication follow-up"
+      } ]
+    } ]
+  }
+}

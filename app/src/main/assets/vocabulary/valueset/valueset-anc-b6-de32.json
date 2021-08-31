@@ -1,0 +1,20 @@
+{
+  "resourceType": "ValueSet",
+  "id": "anc-b6-de32",
+  "url": "http://fhir.org/guides/who/anc-cds/ValueSet/anc-b6-de32",
+  "name": "Parity",
+  "title": "Parity",
+  "status": "draft",
+  "experimental": false,
+  "description": "Codes representing possible values for the Parity element",
+  "immutable": true,
+  "compose": {
+    "include": [ {
+      "system": "http://fhir.org/guides/who/anc-cds/CodeSystem/anc-custom-codes",
+      "concept": [ {
+        "code": "ANC.B6.DE32",
+        "display": "Parity"
+      } ]
+    } ]
+  }
+}
