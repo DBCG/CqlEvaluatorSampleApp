@@ -2,18 +2,13 @@ package org.opencds.cqf.cql.evaluator.android.sample;
 
 import android.content.res.AssetManager;
 
-import org.apache.commons.io.FileUtils;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Bundle;
-import org.opencds.cqf.cql.evaluator.fhir.DirectoryBundler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -26,7 +21,7 @@ import ca.uhn.fhir.util.BundleUtil;
 
 public class AssetBundler {
 
-    private static Bundle assetBundle = null;
+    private static Bundle contentBundle = null;
 
     private static Bundle dataBundle = null;
 
@@ -34,25 +29,17 @@ public class AssetBundler {
     private static IParser json = null;
 
 
-    public static synchronized Bundle getAssetBundle(FhirContext fhirContext, AssetManager assetManager) {
-        if (assetBundle == null){
-            assetBundle = (Bundle)generateAssetBundle(fhirContext, assetManager, "resources");
+    public static synchronized Bundle getContentBundle(FhirContext fhirContext, AssetManager assetManager) {
+        if (contentBundle == null){
+            contentBundle = (Bundle)generateAssetBundle(fhirContext, assetManager, "resources/content");
         }
 
-        return assetBundle;
+        return contentBundle;
     }
 
     public static synchronized Bundle getDataBundle(FhirContext fhirContext, AssetManager assetManager) {
         if (dataBundle == null){
-            dataBundle = (Bundle)generateAssetBundle(fhirContext, assetManager, "tests");
-        }
-
-        return dataBundle;
-    }
-
-    public static synchronized Bundle getTerminologyBundle(FhirContext fhirContext, AssetManager assetManager) {
-        if (dataBundle == null){
-            dataBundle = (Bundle)generateAssetBundle(fhirContext, assetManager, "vocabulary/valueset");
+            dataBundle = (Bundle)generateAssetBundle(fhirContext, assetManager, "resources/tests");
         }
 
         return dataBundle;

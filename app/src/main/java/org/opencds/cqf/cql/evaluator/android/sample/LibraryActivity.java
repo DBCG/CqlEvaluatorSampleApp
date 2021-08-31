@@ -1,30 +1,27 @@
 package org.opencds.cqf.cql.evaluator.android.sample;
 
-import android.content.res.AssetManager;
+import static org.opencds.cqf.cql.evaluator.converter.VersionedIdentifierConverter.toElmIdentifier;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.common.collect.Lists;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.cqframework.cql.cql2elm.CqlTranslatorOptions;
 import org.cqframework.cql.cql2elm.ModelManager;
 import org.cqframework.cql.elm.execution.Library;
 import org.cqframework.cql.elm.execution.VersionedIdentifier;
-import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.opencds.cqf.cql.engine.data.CompositeDataProvider;
 import org.opencds.cqf.cql.engine.data.DataProvider;
 import org.opencds.cqf.cql.engine.fhir.converter.FhirTypeConverter;
 import org.opencds.cqf.cql.engine.fhir.converter.FhirTypeConverterFactory;
 import org.opencds.cqf.cql.engine.fhir.model.R4FhirModelResolver;
-import org.opencds.cqf.cql.engine.model.ModelResolver;
 import org.opencds.cqf.cql.evaluator.CqlEvaluator;
 import org.opencds.cqf.cql.evaluator.cql2elm.content.LibraryContentProvider;
+import org.opencds.cqf.cql.evaluator.cql2elm.content.LibraryContentType;
 import org.opencds.cqf.cql.evaluator.cql2elm.content.fhir.BundleFhirLibraryContentProvider;
 import org.opencds.cqf.cql.evaluator.cql2elm.util.LibraryVersionSelector;
 import org.opencds.cqf.cql.evaluator.engine.execution.TranslatingLibraryLoader;
@@ -34,19 +31,13 @@ import org.opencds.cqf.cql.evaluator.fhir.adapter.r4.AdapterFactory;
 import org.opencds.cqf.cql.evaluator.library.CqlFhirParametersConverter;
 import org.opencds.cqf.cql.evaluator.library.LibraryEvaluator;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
-import ca.uhn.fhir.context.api.BundleInclusionRule;
-import ca.uhn.fhir.model.valueset.BundleTypeEnum;
 import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.rest.api.BundleLinks;
-import ca.uhn.fhir.rest.api.IVersionSpecificBundleFactory;
 
 public class LibraryActivity extends AppCompatActivity {
 
@@ -57,7 +48,6 @@ public class LibraryActivity extends AppCompatActivity {
     LibraryVersionSelector libraryVersionSelector;
 
     LibraryContentProvider contentProvider;
-    ModelResolver modelResolver;
     BundleTerminologyProvider terminologyProvider;
     BundleRetrieveProvider bundleRetrieveProvider;
 
@@ -78,13 +68,11 @@ public class LibraryActivity extends AppCompatActivity {
         this.fhirTypeConverter = new FhirTypeConverterFactory().create(fhirContext.getVersion().getVersion());
         this.cqlFhirParametersConverter = new CqlFhirParametersConverter(this.fhirContext, this.adapterFactory, this.fhirTypeConverter);
 
-        org.hl7.fhir.r4.model.Bundle assetBundle = AssetBundler.getAssetBundle(this.fhirContext, this.getAssets());
+        org.hl7.fhir.r4.model.Bundle assetBundle = AssetBundler.getContentBundle(this.fhirContext, this.getAssets());
         this.contentProvider = new BundleFhirLibraryContentProvider(this.fhirContext, assetBundle, this.adapterFactory, this.libraryVersionSelector);
 
         // Load terminology content, and create a TerminologyProvider which is the interface used by the evaluator for resolving terminology
-        this.terminologyProvider = new BundleTerminologyProvider(this.fhirContext, AssetBundler.getTerminologyBundle(this.fhirContext, this.getAssets()));
-
-        org.hl7.fhir.r4.model.Bundle dataBundle = AssetBundler.getDataBundle(this.fhirContext, this.getAssets());
+        this.terminologyProvider = new BundleTerminologyProvider(this.fhirContext, assetBundle);
         this.bundleRetrieveProvider = new BundleRetrieveProvider(this.fhirContext, AssetBundler.getDataBundle(this.fhirContext, this.getAssets()));
         this.bundleRetrieveProvider.setTerminologyProvider(this.terminologyProvider);
         this.bundleRetrieveProvider.setExpandValueSets(true);
@@ -109,6 +97,21 @@ public class LibraryActivity extends AppCompatActivity {
 //
 //                        return options.equals(this.cqlTranslatorOptions.getOptions());
             }
+
+            @Override
+            protected Library getLibraryFromElm(VersionedIdentifier libraryIdentifier) {
+                org.hl7.elm.r1.VersionedIdentifier versionedIdentifier = toElmIdentifier(libraryIdentifier);
+                InputStream content = this.getLibraryContent(versionedIdentifier, LibraryContentType.JXSON);
+                if (content != null) {
+                    try {
+                        return this.readJxson(content);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                return null;
+            }
         };
 
         this.cqlEvaluator = new CqlEvaluator(libraryLoader,
@@ -120,10 +123,10 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     public void runCql(View view) {
-        IBaseParameters result = libraryEvaluator.evaluate(new VersionedIdentifier().withId("ANCIND02"), Pair.of("Patient", "mom-with-anaemia"), null, null);
+        IBaseParameters result = libraryEvaluator.evaluate(new VersionedIdentifier().withId("ANCIND01"), Pair.of("Patient", "charity-otala-1"), null, null);
 
         String parameters = this.fhirContext.newJsonParser().encodeResourceToString(result);
-        TextView output = (TextView) this.findViewById(R.id.output_text);
+        TextView output = this.findViewById(R.id.output_text);
         output.setText(parameters);
     }
 }
